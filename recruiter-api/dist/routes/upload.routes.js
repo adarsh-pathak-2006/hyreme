@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const upload_1 = require("../config/upload");
+const upload_controller_1 = require("../controllers/upload.controller");
+const auth_1 = require("../middleware/auth");
+const async_handler_1 = require("../utils/async-handler");
+const router = (0, express_1.Router)();
+router.get("/play/:filename", (0, async_handler_1.asyncHandler)(upload_controller_1.streamPlayableVideoController));
+router.get("/poster/:filename", (0, async_handler_1.asyncHandler)(upload_controller_1.streamVideoPosterController));
+router.post("/", auth_1.requireAuth, upload_1.upload.single("file"), (0, async_handler_1.asyncHandler)(upload_controller_1.uploadAssetController));
+exports.default = router;

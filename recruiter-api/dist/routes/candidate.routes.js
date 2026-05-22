@@ -1,0 +1,17 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const auth_1 = require("../middleware/auth");
+const async_handler_1 = require("../utils/async-handler");
+const candidate_controller_1 = require("../controllers/candidate.controller");
+const router = (0, express_1.Router)();
+router.use(auth_1.requireAuth);
+router.get("/bootstrap", (0, async_handler_1.asyncHandler)(candidate_controller_1.getCandidateBootstrapController));
+router.get("/profile", (0, async_handler_1.asyncHandler)(candidate_controller_1.getCandidateProfileController));
+router.put("/profile", (0, async_handler_1.asyncHandler)(candidate_controller_1.upsertCandidateProfileController));
+router.get("/messages", (0, async_handler_1.asyncHandler)(candidate_controller_1.getCandidateMessagesController));
+router.get("/messages/:threadId", (0, async_handler_1.asyncHandler)(candidate_controller_1.getCandidateThreadMessagesController));
+router.post("/messages/:threadId", (0, async_handler_1.asyncHandler)(candidate_controller_1.replyCandidateMessageController));
+router.get("/interviews", (0, async_handler_1.asyncHandler)(candidate_controller_1.getCandidateInterviewsController));
+router.get("/notifications", (0, async_handler_1.asyncHandler)(candidate_controller_1.getCandidateNotificationsController));
+exports.default = router;
