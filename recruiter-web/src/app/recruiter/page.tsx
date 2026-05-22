@@ -29,7 +29,7 @@ export default function RecruiterDashboardPage() {
           <div className="flex flex-wrap gap-3">
             <Link
               href="/recruiter/feed"
-              className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-[var(--accent-deep)] hover:text-[var(--accent-strong)] transition hover:bg-[var(--accent-soft)]/80"
+              className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-accent-deep hover:text-accent-strong transition hover:bg-[var(--accent-soft)]/80"
             >
               Open candidate feed
             </Link>
