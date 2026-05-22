@@ -19,7 +19,7 @@ export function CandidateCard({
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--accent-soft)] via-[var(--accent)]/35 to-[var(--accent-strong)]/25 text-lg font-semibold text-[var(--accent-deep)]">
             {candidate.name
               .split(" ")
-              .map((part) => part[0])
+              .map((part: string) => part[0])
               .slice(0, 2)
               .join("")}
           </div>

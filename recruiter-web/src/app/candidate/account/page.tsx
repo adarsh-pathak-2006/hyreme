@@ -38,7 +38,7 @@ export default function CandidateAccountPage() {
           <div className="flex h-16 w-16 items-center justify-center rounded-[1.5rem] bg-white/10 text-xl font-semibold">
             {profile.name
               .split(" ")
-              .map((part) => part[0])
+              .map((part: string) => part[0])
               .slice(0, 2)
               .join("")}
           </div>

@@ -61,7 +61,7 @@ function CandidateMeta({ candidate, index }: { candidate: Candidate; index: numb
         <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-xs font-semibold backdrop-blur">
           {candidate.name
             .split(" ")
-            .map((part) => part[0])
+            .map((part: string) => part[0])
             .slice(0, 2)
             .join("")}
         </div>
