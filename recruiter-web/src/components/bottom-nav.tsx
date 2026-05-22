@@ -111,11 +111,11 @@ export function BottomNav() {
               className={`flex h-12 flex-1 items-center justify-center transition lg:h-14 lg:rounded-[1.15rem] ${
                 isActive
                   ? isFeedRoute
-                    ? "text-white lg:bg-white lg:text-accent-deep"
+                    ? "text-white lg:bg-white lg:text-[var(--accent-deep)]"
                     : "text-[var(--accent-strong)] lg:bg-gradient-to-br lg:from-accent-strong lg:to-accent lg:text-white lg:shadow-[0_10px_30px_rgba(44,42,74,0.18)]"
                   : isFeedRoute
                     ? "text-white/50 hover:text-white"
-                    : "text-[color:rgba(44,42,74,0.48)] hover:text-accent-deep"
+                    : "text-[color:rgba(44,42,74,0.48)] hover:text-[var(--accent-deep)]"
               }`}
             >
               <item.Icon className="h-5 w-5 sm:h-[1.35rem] sm:w-[1.35rem]" />
