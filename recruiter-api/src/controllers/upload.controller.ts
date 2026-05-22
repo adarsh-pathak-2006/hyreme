@@ -9,6 +9,8 @@ import {
   transcodeVideoToMp4,
 } from "../services/media.service";
 
+import { isCloudinaryEnabled, uploadToCloudinary } from "../services/cloudinary.service";
+
 export async function uploadAssetController(req: Request, res: Response) {
   if (!req.user) {
     throw new AppError("Authentication required", 401);
@@ -38,12 +40,26 @@ export async function uploadAssetController(req: Request, res: Response) {
     );
   }
 
-  const origin = `${req.protocol}://${req.get("host")}`;
-  let filename = req.file.filename;
+  // If Cloudinary is configured, stream raw file directly to cloud CDN and clean up local server disk!
+  if (isCloudinaryEnabled()) {
+    try {
+      const cloudResult = await uploadToCloudinary(req.file.path, "hyreme");
+      await fs.unlink(req.file.path).catch(() => undefined);
 
-  // We bypass heavy video transcoding on the server in production to avoid hitting Render's 30s HTTP timeout limit,
-  // high CPU restrictions, or triggering Out-Of-Memory (OOM) process termination on limited cloud tiers.
-  // Modern browsers are fully capable of playing standard MP4/WebM videos natively!
+      res.status(201).json({
+        url: cloudResult.url,
+        filename: cloudResult.publicId,
+        kind: payload.kind,
+      });
+      return;
+    } catch (err) {
+      console.warn("Cloudinary upload failed, falling back to local static serving:", err);
+    }
+  }
+
+  // Zero-downtime local disk storage fallback if Cloudinary credentials aren't set
+  const origin = `${req.protocol}://${req.get("host")}`;
+  const filename = req.file.filename;
 
   res.status(201).json({
     url: `${origin}/uploads/${filename}`,

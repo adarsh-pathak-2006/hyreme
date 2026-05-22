@@ -46,6 +46,10 @@ const envSchema = z.object({
   ENABLE_OTP: booleanFromEnv.default(false),
   SEED_RECRUITER_EMAIL: z.string().email().default("ritika@hyreme.io"),
   SEED_RECRUITER_PASSWORD: z.string().min(8).default("Hyreme@123"),
+  CLOUDINARY_URL: z.string().optional(),
+  CLOUDINARY_CLOUD_NAME: z.string().optional(),
+  CLOUDINARY_API_KEY: z.string().optional(),
+  CLOUDINARY_API_SECRET: z.string().optional(),
 });
 
 const parsedEnv = envSchema.parse(process.env);
