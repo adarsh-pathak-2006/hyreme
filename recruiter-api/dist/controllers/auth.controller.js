@@ -4,6 +4,7 @@ exports.recruiterRegister = recruiterRegister;
 exports.recruiterLogin = recruiterLogin;
 exports.candidateRegister = candidateRegister;
 exports.candidateLogin = candidateLogin;
+exports.candidateGoogleAuth = candidateGoogleAuth;
 exports.requestOtp = requestOtp;
 exports.verifyOtpController = verifyOtpController;
 exports.getSession = getSession;
@@ -170,6 +171,37 @@ async function candidateLogin(req, res) {
     setAccessCookie(res, (0, auth_1.signAccessToken)(authUser, session._id.toString()));
     setRefreshCookie(res, refreshToken, rememberMe);
     setSessionHintCookie(res, authUser, rememberMe);
+    res.json(response);
+}
+async function candidateGoogleAuth(req, res) {
+    const { email, name } = req.body;
+    if (!email || !name) {
+        throw new app_error_1.AppError("Google email and name are required", 400);
+    }
+    let user = await User_1.UserModel.findOne({ email: email.toLowerCase() });
+    if (user) {
+        if (user.role !== "candidate") {
+            throw new app_error_1.AppError("This Google account is registered as a Recruiter. Please login via Recruiter tab.", 403);
+        }
+    }
+    else {
+        // Automatically register new candidate on the fly
+        user = await User_1.UserModel.create({
+            name,
+            email: email.toLowerCase(),
+            password: await (0, auth_1.hashPassword)(Math.random().toString(36).slice(-10) + "G!"),
+            role: "candidate",
+        });
+    }
+    const authUser = (0, serialization_1.toAuthUser)(user);
+    const { session, refreshToken } = await (0, session_service_1.createSession)(authUser.id, req, true);
+    const response = {
+        accessToken: "",
+        user: authUser,
+    };
+    setAccessCookie(res, (0, auth_1.signAccessToken)(authUser, session._id.toString()));
+    setRefreshCookie(res, refreshToken, true);
+    setSessionHintCookie(res, authUser, true);
     res.json(response);
 }
 async function requestOtp(req, res) {

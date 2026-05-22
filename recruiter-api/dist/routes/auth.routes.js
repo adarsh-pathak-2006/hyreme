@@ -10,6 +10,7 @@ router.post("/recruiter/register", (0, async_handler_1.asyncHandler)(auth_contro
 router.post("/recruiter/login", (0, async_handler_1.asyncHandler)(auth_controller_1.recruiterLogin));
 router.post("/candidate/register", (0, async_handler_1.asyncHandler)(auth_controller_1.candidateRegister));
 router.post("/candidate/login", (0, async_handler_1.asyncHandler)(auth_controller_1.candidateLogin));
+router.post("/candidate/google", (0, async_handler_1.asyncHandler)(auth_controller_1.candidateGoogleAuth));
 if (env_1.env.ENABLE_OTP) {
     router.post("/otp/request", (0, async_handler_1.asyncHandler)(auth_controller_1.requestOtp));
     router.post("/otp/verify", (0, async_handler_1.asyncHandler)(auth_controller_1.verifyOtpController));
