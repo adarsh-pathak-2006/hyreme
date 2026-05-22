@@ -32,7 +32,7 @@ export function SavedReelCard({
   const reelUrl = buildPlayableVideoUrl(candidate.videoUrl);
 
   return (
-    <article className="border-b border-[color:rgba(79,81,140,0.12)] pb-8 last:border-b-0 last:pb-0 sm:rounded-[2rem] sm:border sm:border-[color:rgba(79,81,140,0.12)] sm:bg-white/92 sm:p-5 sm:shadow-[0_24px_100px_rgba(44,42,74,0.08)]">
+    <article className="rounded-[2rem] border border-[color:rgba(79,81,140,0.12)] bg-white/92 p-4 sm:p-5 shadow-[0_16px_40px_rgba(44,42,74,0.055)]">
       <div className="grid gap-5 xl:grid-cols-[minmax(0,0.8fr)_minmax(320px,0.6fr)]">
         <div className="overflow-hidden rounded-[2rem] bg-[linear-gradient(160deg,var(--accent-deep),var(--accent-strong))] p-5 text-white sm:p-6">
           <div className="flex items-center justify-between">
