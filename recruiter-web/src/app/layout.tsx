@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Manrope, Space_Grotesk } from "next/font/google";
 import { BottomNav } from "@/components/bottom-nav";
+import { PWARegister } from "@/components/pwa-register";
 import { RecruiterProvider } from "@/components/recruiter-provider";
 import "./globals.css";
 
@@ -18,6 +19,12 @@ export const metadata: Metadata = {
   title: "HYREME Recruiter",
   description:
     "Recruiter-first workspace for discovering video resumes, messaging candidates, and scheduling interviews.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Hyreme",
+  },
 };
 
 export default function RootLayout({
@@ -34,6 +41,7 @@ export default function RootLayout({
         <RecruiterProvider>
           {children}
           <BottomNav />
+          <PWARegister />
         </RecruiterProvider>
       </body>
     </html>
