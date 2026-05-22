@@ -7,18 +7,21 @@ exports.userRoleSchema = zod_1.z.enum(types_1.USER_ROLES);
 exports.recruiterLoginSchema = zod_1.z.object({
     email: zod_1.z.string().email(),
     password: zod_1.z.string().min(8),
+    rememberMe: zod_1.z.boolean().optional(),
 });
 exports.recruiterRegisterSchema = zod_1.z.object({
     name: zod_1.z.string().min(2).max(120),
     email: zod_1.z.string().email(),
     password: zod_1.z.string().min(8).max(128),
     companyName: zod_1.z.string().min(2).max(120),
+    rememberMe: zod_1.z.boolean().optional(),
 });
 exports.candidateLoginSchema = exports.recruiterLoginSchema;
 exports.candidateRegisterSchema = zod_1.z.object({
     name: zod_1.z.string().min(2).max(120),
     email: zod_1.z.string().email(),
     password: zod_1.z.string().min(8).max(128),
+    rememberMe: zod_1.z.boolean().optional(),
 });
 exports.otpRequestSchema = zod_1.z.object({
     email: zod_1.z.string().email(),
@@ -44,6 +47,7 @@ exports.scheduleMeetingSchema = zod_1.z.object({
     time: zod_1.z.string().min(1),
     mode: zod_1.z.string().min(1),
     note: zod_1.z.string().max(500).default(""),
+    meetingUrl: zod_1.z.string().url().optional(),
 });
 exports.sendMessageSchema = zod_1.z.object({
     candidateId: zod_1.z.string().min(1),

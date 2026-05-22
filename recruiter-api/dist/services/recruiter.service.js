@@ -56,6 +56,10 @@ async function toggleSavedCandidate(recruiterId, candidateId) {
             title: "Profile saved",
             message: "A recruiter saved your profile for follow-up.",
         });
+        (0, socket_service_1.emitToUser)(candidate.userId.toString(), "app:refresh", {
+            type: "saved",
+            candidateId,
+        });
     }
     return { saved: true };
 }
@@ -73,11 +77,12 @@ async function scheduleInterview(recruiterId, payload, ownerName) {
         note: payload.note,
         owner: ownerName,
         stage: "Recruiter screen",
-        meetingLink: payload.mode === "Google Meet"
-            ? "https://meet.google.com/hyreme-demo"
-            : payload.mode === "Zoom"
-                ? "https://zoom.us/j/hyreme-demo"
-                : "",
+        meetingLink: payload.meetingUrl ||
+            (payload.mode === "Google Meet"
+                ? "https://meet.google.com/hyreme-demo"
+                : payload.mode === "Zoom"
+                    ? "https://zoom.us/j/hyreme-demo"
+                    : ""),
         status: "Scheduled",
     }, { new: true, upsert: true });
     await Notification_1.NotificationModel.create({
@@ -91,6 +96,14 @@ async function scheduleInterview(recruiterId, payload, ownerName) {
         type: "interview",
         title: "Interview invite received",
         message: `${ownerName} scheduled an interview with you on ${payload.date} at ${payload.time}.`,
+    });
+    (0, socket_service_1.emitToUser)(candidate.userId.toString(), "app:refresh", {
+        type: "interview",
+        candidateId: candidate._id.toString(),
+    });
+    (0, socket_service_1.emitToUser)(recruiterId, "app:refresh", {
+        type: "interview",
+        candidateId: candidate._id.toString(),
     });
     return interview;
 }

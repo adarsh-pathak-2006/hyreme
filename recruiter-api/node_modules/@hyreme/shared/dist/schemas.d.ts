@@ -3,51 +3,63 @@ export declare const userRoleSchema: z.ZodEnum<["candidate", "recruiter", "admin
 export declare const recruiterLoginSchema: z.ZodObject<{
     email: z.ZodString;
     password: z.ZodString;
+    rememberMe: z.ZodOptional<z.ZodBoolean>;
 }, "strip", z.ZodTypeAny, {
     email: string;
     password: string;
+    rememberMe?: boolean | undefined;
 }, {
     email: string;
     password: string;
+    rememberMe?: boolean | undefined;
 }>;
 export declare const recruiterRegisterSchema: z.ZodObject<{
     name: z.ZodString;
     email: z.ZodString;
     password: z.ZodString;
     companyName: z.ZodString;
+    rememberMe: z.ZodOptional<z.ZodBoolean>;
 }, "strip", z.ZodTypeAny, {
     email: string;
     password: string;
     name: string;
     companyName: string;
+    rememberMe?: boolean | undefined;
 }, {
     email: string;
     password: string;
     name: string;
     companyName: string;
+    rememberMe?: boolean | undefined;
 }>;
 export declare const candidateLoginSchema: z.ZodObject<{
     email: z.ZodString;
     password: z.ZodString;
+    rememberMe: z.ZodOptional<z.ZodBoolean>;
 }, "strip", z.ZodTypeAny, {
     email: string;
     password: string;
+    rememberMe?: boolean | undefined;
 }, {
     email: string;
     password: string;
+    rememberMe?: boolean | undefined;
 }>;
 export declare const candidateRegisterSchema: z.ZodObject<{
     name: z.ZodString;
     email: z.ZodString;
     password: z.ZodString;
+    rememberMe: z.ZodOptional<z.ZodBoolean>;
 }, "strip", z.ZodTypeAny, {
     email: string;
     password: string;
     name: string;
+    rememberMe?: boolean | undefined;
 }, {
     email: string;
     password: string;
     name: string;
+    rememberMe?: boolean | undefined;
 }>;
 export declare const otpRequestSchema: z.ZodObject<{
     email: z.ZodString;
@@ -111,18 +123,21 @@ export declare const scheduleMeetingSchema: z.ZodObject<{
     time: z.ZodString;
     mode: z.ZodString;
     note: z.ZodDefault<z.ZodString>;
+    meetingUrl: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
     date: string;
     candidateId: string;
     time: string;
     mode: string;
     note: string;
+    meetingUrl?: string | undefined;
 }, {
     date: string;
     candidateId: string;
     time: string;
     mode: string;
     note?: string | undefined;
+    meetingUrl?: string | undefined;
 }>;
 export declare const sendMessageSchema: z.ZodObject<{
     candidateId: z.ZodString;

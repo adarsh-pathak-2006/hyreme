@@ -68,6 +68,7 @@ export type InterviewItem = {
   owner: string;
   mode: string;
   linkLabel: string;
+  meetingUrl?: string;
   note?: string;
   status?: string;
 };
@@ -78,6 +79,7 @@ export type ScheduledMeeting = {
   time: string;
   mode: string;
   note: string;
+  meetingUrl?: string;
 };
 
 export type NotificationItem = {

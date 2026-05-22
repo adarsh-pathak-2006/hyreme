@@ -10,8 +10,10 @@ exports.rotateSession = rotateSession;
 exports.revokeSessionById = revokeSessionById;
 exports.revokeSessionByRefreshToken = revokeSessionByRefreshToken;
 const crypto_1 = __importDefault(require("crypto"));
+const env_1 = require("../config/env");
 const Session_1 = require("../models/Session");
-const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+const REMEMBER_ME_TTL_MS = env_1.env.REMEMBER_ME_REFRESH_TOKEN_TTL_DAYS * 24 * 60 * 60 * 1000;
+const SESSION_ONLY_TTL_MS = env_1.env.SESSION_REFRESH_TOKEN_TTL_HOURS * 60 * 60 * 1000;
 function hashToken(token) {
     return crypto_1.default.createHash("sha256").update(token).digest("hex");
 }
@@ -25,13 +27,17 @@ function getRequestIp(request) {
     }
     return request.ip;
 }
-async function createSession(userId, request) {
+function getSessionTtlMs(rememberMe) {
+    return rememberMe ? REMEMBER_ME_TTL_MS : SESSION_ONLY_TTL_MS;
+}
+async function createSession(userId, request, rememberMe = false) {
     const refreshToken = createOpaqueToken();
-    const expiresAt = new Date(Date.now() + SESSION_TTL_MS);
+    const expiresAt = new Date(Date.now() + getSessionTtlMs(rememberMe));
     const session = await Session_1.SessionModel.create({
         userId,
         refreshTokenHash: hashToken(refreshToken),
         expiresAt,
+        rememberMe,
         userAgent: request.get("user-agent"),
         ipAddress: getRequestIp(request),
         lastUsedAt: new Date(),
@@ -57,8 +63,15 @@ async function validateSession(sessionId, userId) {
     });
 }
 async function rotateSession(sessionId, request) {
+    const existingSession = await Session_1.SessionModel.findById(sessionId);
+    if (!existingSession) {
+        return {
+            session: null,
+            refreshToken: "",
+        };
+    }
     const refreshToken = createOpaqueToken();
-    const expiresAt = new Date(Date.now() + SESSION_TTL_MS);
+    const expiresAt = new Date(Date.now() + getSessionTtlMs(Boolean(existingSession.rememberMe)));
     const session = await Session_1.SessionModel.findByIdAndUpdate(sessionId, {
         refreshTokenHash: hashToken(refreshToken),
         expiresAt,

@@ -35,6 +35,30 @@ function assertCompanyEmail(email: string) {
   }
 }
 
+function getRefreshCookieOptions(rememberMe: boolean) {
+  return {
+    httpOnly: true,
+    sameSite: "strict" as const,
+    secure: env.NODE_ENV === "production",
+    path: "/",
+    ...(rememberMe
+      ? { maxAge: env.REMEMBER_ME_REFRESH_TOKEN_TTL_DAYS * 24 * 60 * 60 * 1000 }
+      : {}),
+  };
+}
+
+function getSessionHintCookieOptions(rememberMe: boolean) {
+  return {
+    httpOnly: false,
+    sameSite: "strict" as const,
+    secure: env.NODE_ENV === "production",
+    path: "/",
+    ...(rememberMe
+      ? { maxAge: env.REMEMBER_ME_REFRESH_TOKEN_TTL_DAYS * 24 * 60 * 60 * 1000 }
+      : {}),
+  };
+}
+
 function setAccessCookie(res: Response, token: string) {
   res.cookie("hyreme_access_token", token, {
     httpOnly: true,
@@ -45,24 +69,20 @@ function setAccessCookie(res: Response, token: string) {
   });
 }
 
-function setRefreshCookie(res: Response, token: string) {
-  res.cookie("hyreme_refresh_token", token, {
-    httpOnly: true,
-    sameSite: "strict",
-    secure: env.NODE_ENV === "production",
-    path: "/",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
+function setRefreshCookie(res: Response, token: string, rememberMe: boolean) {
+  res.cookie("hyreme_refresh_token", token, getRefreshCookieOptions(rememberMe));
 }
 
-function setSessionHintCookie(res: Response, user: { id: string; role: string }) {
-  res.cookie("hyreme_session", `${user.role}:${user.id}`, {
-    httpOnly: false,
-    sameSite: "strict",
-    secure: env.NODE_ENV === "production",
-    path: "/",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
+function setSessionHintCookie(
+  res: Response,
+  user: { id: string; role: string },
+  rememberMe: boolean,
+) {
+  res.cookie(
+    "hyreme_session",
+    `${user.role}:${user.id}`,
+    getSessionHintCookieOptions(rememberMe),
+  );
 }
 
 async function requireVerifiedOtp(
@@ -82,6 +102,7 @@ async function requireVerifiedOtp(
 
 export async function recruiterRegister(req: Request, res: Response) {
   const payload = recruiterRegisterSchema.parse(req.body);
+  const rememberMe = Boolean((req.body as { rememberMe?: boolean }).rememberMe);
   assertCompanyEmail(payload.email);
 
   const existing = await UserModel.findOne({ email: payload.email.toLowerCase() });
@@ -104,19 +125,20 @@ export async function recruiterRegister(req: Request, res: Response) {
   });
 
   const authUser = toAuthUser(user);
-  const { session, refreshToken } = await createSession(authUser.id, req);
+  const { session, refreshToken } = await createSession(authUser.id, req, rememberMe);
   const response: AuthResponse = {
     accessToken: "",
     user: authUser,
   };
   setAccessCookie(res, signAccessToken(authUser, session._id.toString()));
-  setRefreshCookie(res, refreshToken);
-  setSessionHintCookie(res, authUser);
+  setRefreshCookie(res, refreshToken, rememberMe);
+  setSessionHintCookie(res, authUser, rememberMe);
   res.status(201).json(response);
 }
 
 export async function recruiterLogin(req: Request, res: Response) {
   const payload = recruiterLoginSchema.parse(req.body);
+  const rememberMe = Boolean((req.body as { rememberMe?: boolean }).rememberMe);
   const user = await UserModel.findOne({ email: payload.email.toLowerCase() });
 
   if (!user || user.role !== "recruiter") {
@@ -129,19 +151,20 @@ export async function recruiterLogin(req: Request, res: Response) {
   }
 
   const authUser = toAuthUser(user);
-  const { session, refreshToken } = await createSession(authUser.id, req);
+  const { session, refreshToken } = await createSession(authUser.id, req, rememberMe);
   const response: AuthResponse = {
     accessToken: "",
     user: authUser,
   };
   setAccessCookie(res, signAccessToken(authUser, session._id.toString()));
-  setRefreshCookie(res, refreshToken);
-  setSessionHintCookie(res, authUser);
+  setRefreshCookie(res, refreshToken, rememberMe);
+  setSessionHintCookie(res, authUser, rememberMe);
   res.json(response);
 }
 
 export async function candidateRegister(req: Request, res: Response) {
   const payload = candidateRegisterSchema.parse(req.body);
+  const rememberMe = Boolean((req.body as { rememberMe?: boolean }).rememberMe);
   await requireVerifiedOtp(payload.email, "candidate", "register");
 
   const existing = await UserModel.findOne({ email: payload.email.toLowerCase() });
@@ -157,19 +180,20 @@ export async function candidateRegister(req: Request, res: Response) {
   });
 
   const authUser = toAuthUser(user);
-  const { session, refreshToken } = await createSession(authUser.id, req);
+  const { session, refreshToken } = await createSession(authUser.id, req, rememberMe);
   const response: AuthResponse = {
     accessToken: "",
     user: authUser,
   };
   setAccessCookie(res, signAccessToken(authUser, session._id.toString()));
-  setRefreshCookie(res, refreshToken);
-  setSessionHintCookie(res, authUser);
+  setRefreshCookie(res, refreshToken, rememberMe);
+  setSessionHintCookie(res, authUser, rememberMe);
   res.status(201).json(response);
 }
 
 export async function candidateLogin(req: Request, res: Response) {
   const payload = candidateLoginSchema.parse(req.body);
+  const rememberMe = Boolean((req.body as { rememberMe?: boolean }).rememberMe);
   await requireVerifiedOtp(payload.email, "candidate", "login");
   const user = await UserModel.findOne({ email: payload.email.toLowerCase() });
 
@@ -183,14 +207,14 @@ export async function candidateLogin(req: Request, res: Response) {
   }
 
   const authUser = toAuthUser(user);
-  const { session, refreshToken } = await createSession(authUser.id, req);
+  const { session, refreshToken } = await createSession(authUser.id, req, rememberMe);
   const response: AuthResponse = {
     accessToken: "",
     user: authUser,
   };
   setAccessCookie(res, signAccessToken(authUser, session._id.toString()));
-  setRefreshCookie(res, refreshToken);
-  setSessionHintCookie(res, authUser);
+  setRefreshCookie(res, refreshToken, rememberMe);
+  setSessionHintCookie(res, authUser, rememberMe);
   res.json(response);
 }
 
@@ -276,9 +300,10 @@ export async function refreshSession(req: Request, res: Response) {
     throw new AppError("Unable to rotate session", 500);
   }
 
+  const rememberMe = Boolean(rotated.session.rememberMe);
   setAccessCookie(res, signAccessToken(authUser, rotated.session._id.toString()));
-  setRefreshCookie(res, rotated.refreshToken);
-  setSessionHintCookie(res, authUser);
+  setRefreshCookie(res, rotated.refreshToken, rememberMe);
+  setSessionHintCookie(res, authUser, rememberMe);
   res.json({ accessToken: "", user: authUser });
 }
 

@@ -59,6 +59,7 @@ export function toScheduledMeeting(interview: InterviewDocument): ScheduledMeeti
     time: interview.time,
     mode: interview.mode,
     note: interview.note,
+    meetingUrl: interview.meetingLink || undefined,
   };
 }
 
@@ -77,6 +78,7 @@ export function toInterviewItem(
     owner: interview.owner,
     mode: interview.mode,
     linkLabel: interview.meetingLink ? "Meet link ready" : "Invite pending confirmation",
+    meetingUrl: interview.meetingLink || undefined,
     note: interview.note,
     status: interview.status,
   };

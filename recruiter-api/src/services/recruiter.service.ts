@@ -68,6 +68,11 @@ export async function toggleSavedCandidate(recruiterId: string, candidateId: str
       title: "Profile saved",
       message: "A recruiter saved your profile for follow-up.",
     });
+
+    emitToUser(candidate.userId.toString(), "app:refresh", {
+      type: "saved",
+      candidateId,
+    });
   }
 
   return { saved: true };
@@ -95,11 +100,12 @@ export async function scheduleInterview(
       owner: ownerName,
       stage: "Recruiter screen",
       meetingLink:
-        payload.mode === "Google Meet"
+        payload.meetingUrl ||
+        (payload.mode === "Google Meet"
           ? "https://meet.google.com/hyreme-demo"
           : payload.mode === "Zoom"
             ? "https://zoom.us/j/hyreme-demo"
-            : "",
+            : ""),
       status: "Scheduled",
     },
     { new: true, upsert: true },
@@ -117,6 +123,15 @@ export async function scheduleInterview(
     type: "interview",
     title: "Interview invite received",
     message: `${ownerName} scheduled an interview with you on ${payload.date} at ${payload.time}.`,
+  });
+
+  emitToUser(candidate.userId.toString(), "app:refresh", {
+    type: "interview",
+    candidateId: candidate._id.toString(),
+  });
+  emitToUser(recruiterId, "app:refresh", {
+    type: "interview",
+    candidateId: candidate._id.toString(),
   });
 
   return interview;

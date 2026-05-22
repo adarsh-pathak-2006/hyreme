@@ -1,8 +1,12 @@
 import crypto from "crypto";
 import type { Request } from "express";
+import { env } from "../config/env";
 import { SessionModel } from "../models/Session";
 
-const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+const REMEMBER_ME_TTL_MS =
+  env.REMEMBER_ME_REFRESH_TOKEN_TTL_DAYS * 24 * 60 * 60 * 1000;
+const SESSION_ONLY_TTL_MS =
+  env.SESSION_REFRESH_TOKEN_TTL_HOURS * 60 * 60 * 1000;
 
 function hashToken(token: string) {
   return crypto.createHash("sha256").update(token).digest("hex");
@@ -21,13 +25,18 @@ function getRequestIp(request: Request) {
   return request.ip;
 }
 
-export async function createSession(userId: string, request: Request) {
+function getSessionTtlMs(rememberMe: boolean) {
+  return rememberMe ? REMEMBER_ME_TTL_MS : SESSION_ONLY_TTL_MS;
+}
+
+export async function createSession(userId: string, request: Request, rememberMe = false) {
   const refreshToken = createOpaqueToken();
-  const expiresAt = new Date(Date.now() + SESSION_TTL_MS);
+  const expiresAt = new Date(Date.now() + getSessionTtlMs(rememberMe));
   const session = await SessionModel.create({
     userId,
     refreshTokenHash: hashToken(refreshToken),
     expiresAt,
+    rememberMe,
     userAgent: request.get("user-agent"),
     ipAddress: getRequestIp(request),
     lastUsedAt: new Date(),
@@ -57,8 +66,16 @@ export async function validateSession(sessionId: string, userId: string) {
 }
 
 export async function rotateSession(sessionId: string, request: Request) {
+  const existingSession = await SessionModel.findById(sessionId);
+  if (!existingSession) {
+    return {
+      session: null,
+      refreshToken: "",
+    };
+  }
+
   const refreshToken = createOpaqueToken();
-  const expiresAt = new Date(Date.now() + SESSION_TTL_MS);
+  const expiresAt = new Date(Date.now() + getSessionTtlMs(Boolean(existingSession.rememberMe)));
   const session = await SessionModel.findByIdAndUpdate(
     sessionId,
     {

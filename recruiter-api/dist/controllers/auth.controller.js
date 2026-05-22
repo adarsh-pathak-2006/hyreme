@@ -25,6 +25,28 @@ function assertCompanyEmail(email) {
         throw new app_error_1.AppError("Use a company or professional email address", 400);
     }
 }
+function getRefreshCookieOptions(rememberMe) {
+    return {
+        httpOnly: true,
+        sameSite: "strict",
+        secure: env_1.env.NODE_ENV === "production",
+        path: "/",
+        ...(rememberMe
+            ? { maxAge: env_1.env.REMEMBER_ME_REFRESH_TOKEN_TTL_DAYS * 24 * 60 * 60 * 1000 }
+            : {}),
+    };
+}
+function getSessionHintCookieOptions(rememberMe) {
+    return {
+        httpOnly: false,
+        sameSite: "strict",
+        secure: env_1.env.NODE_ENV === "production",
+        path: "/",
+        ...(rememberMe
+            ? { maxAge: env_1.env.REMEMBER_ME_REFRESH_TOKEN_TTL_DAYS * 24 * 60 * 60 * 1000 }
+            : {}),
+    };
+}
 function setAccessCookie(res, token) {
     res.cookie("hyreme_access_token", token, {
         httpOnly: true,
@@ -34,23 +56,11 @@ function setAccessCookie(res, token) {
         maxAge: 15 * 60 * 1000,
     });
 }
-function setRefreshCookie(res, token) {
-    res.cookie("hyreme_refresh_token", token, {
-        httpOnly: true,
-        sameSite: "strict",
-        secure: env_1.env.NODE_ENV === "production",
-        path: "/",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+function setRefreshCookie(res, token, rememberMe) {
+    res.cookie("hyreme_refresh_token", token, getRefreshCookieOptions(rememberMe));
 }
-function setSessionHintCookie(res, user) {
-    res.cookie("hyreme_session", `${user.role}:${user.id}`, {
-        httpOnly: false,
-        sameSite: "strict",
-        secure: env_1.env.NODE_ENV === "production",
-        path: "/",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+function setSessionHintCookie(res, user, rememberMe) {
+    res.cookie("hyreme_session", `${user.role}:${user.id}`, getSessionHintCookieOptions(rememberMe));
 }
 async function requireVerifiedOtp(email, role, purpose) {
     if (!env_1.env.ENABLE_OTP) {
@@ -63,6 +73,7 @@ async function requireVerifiedOtp(email, role, purpose) {
 }
 async function recruiterRegister(req, res) {
     const payload = shared_1.recruiterRegisterSchema.parse(req.body);
+    const rememberMe = Boolean(req.body.rememberMe);
     assertCompanyEmail(payload.email);
     const existing = await User_1.UserModel.findOne({ email: payload.email.toLowerCase() });
     if (existing) {
@@ -81,18 +92,19 @@ async function recruiterRegister(req, res) {
         verified: false,
     });
     const authUser = (0, serialization_1.toAuthUser)(user);
-    const { session, refreshToken } = await (0, session_service_1.createSession)(authUser.id, req);
+    const { session, refreshToken } = await (0, session_service_1.createSession)(authUser.id, req, rememberMe);
     const response = {
         accessToken: "",
         user: authUser,
     };
     setAccessCookie(res, (0, auth_1.signAccessToken)(authUser, session._id.toString()));
-    setRefreshCookie(res, refreshToken);
-    setSessionHintCookie(res, authUser);
+    setRefreshCookie(res, refreshToken, rememberMe);
+    setSessionHintCookie(res, authUser, rememberMe);
     res.status(201).json(response);
 }
 async function recruiterLogin(req, res) {
     const payload = shared_1.recruiterLoginSchema.parse(req.body);
+    const rememberMe = Boolean(req.body.rememberMe);
     const user = await User_1.UserModel.findOne({ email: payload.email.toLowerCase() });
     if (!user || user.role !== "recruiter") {
         throw new app_error_1.AppError("Invalid recruiter credentials", 401);
@@ -102,18 +114,19 @@ async function recruiterLogin(req, res) {
         throw new app_error_1.AppError("Invalid recruiter credentials", 401);
     }
     const authUser = (0, serialization_1.toAuthUser)(user);
-    const { session, refreshToken } = await (0, session_service_1.createSession)(authUser.id, req);
+    const { session, refreshToken } = await (0, session_service_1.createSession)(authUser.id, req, rememberMe);
     const response = {
         accessToken: "",
         user: authUser,
     };
     setAccessCookie(res, (0, auth_1.signAccessToken)(authUser, session._id.toString()));
-    setRefreshCookie(res, refreshToken);
-    setSessionHintCookie(res, authUser);
+    setRefreshCookie(res, refreshToken, rememberMe);
+    setSessionHintCookie(res, authUser, rememberMe);
     res.json(response);
 }
 async function candidateRegister(req, res) {
     const payload = shared_1.candidateRegisterSchema.parse(req.body);
+    const rememberMe = Boolean(req.body.rememberMe);
     await requireVerifiedOtp(payload.email, "candidate", "register");
     const existing = await User_1.UserModel.findOne({ email: payload.email.toLowerCase() });
     if (existing) {
@@ -126,18 +139,19 @@ async function candidateRegister(req, res) {
         role: "candidate",
     });
     const authUser = (0, serialization_1.toAuthUser)(user);
-    const { session, refreshToken } = await (0, session_service_1.createSession)(authUser.id, req);
+    const { session, refreshToken } = await (0, session_service_1.createSession)(authUser.id, req, rememberMe);
     const response = {
         accessToken: "",
         user: authUser,
     };
     setAccessCookie(res, (0, auth_1.signAccessToken)(authUser, session._id.toString()));
-    setRefreshCookie(res, refreshToken);
-    setSessionHintCookie(res, authUser);
+    setRefreshCookie(res, refreshToken, rememberMe);
+    setSessionHintCookie(res, authUser, rememberMe);
     res.status(201).json(response);
 }
 async function candidateLogin(req, res) {
     const payload = shared_1.candidateLoginSchema.parse(req.body);
+    const rememberMe = Boolean(req.body.rememberMe);
     await requireVerifiedOtp(payload.email, "candidate", "login");
     const user = await User_1.UserModel.findOne({ email: payload.email.toLowerCase() });
     if (!user || user.role !== "candidate") {
@@ -148,14 +162,14 @@ async function candidateLogin(req, res) {
         throw new app_error_1.AppError("Invalid candidate credentials", 401);
     }
     const authUser = (0, serialization_1.toAuthUser)(user);
-    const { session, refreshToken } = await (0, session_service_1.createSession)(authUser.id, req);
+    const { session, refreshToken } = await (0, session_service_1.createSession)(authUser.id, req, rememberMe);
     const response = {
         accessToken: "",
         user: authUser,
     };
     setAccessCookie(res, (0, auth_1.signAccessToken)(authUser, session._id.toString()));
-    setRefreshCookie(res, refreshToken);
-    setSessionHintCookie(res, authUser);
+    setRefreshCookie(res, refreshToken, rememberMe);
+    setSessionHintCookie(res, authUser, rememberMe);
     res.json(response);
 }
 async function requestOtp(req, res) {
@@ -224,9 +238,10 @@ async function refreshSession(req, res) {
     if (!rotated.session) {
         throw new app_error_1.AppError("Unable to rotate session", 500);
     }
+    const rememberMe = Boolean(rotated.session.rememberMe);
     setAccessCookie(res, (0, auth_1.signAccessToken)(authUser, rotated.session._id.toString()));
-    setRefreshCookie(res, rotated.refreshToken);
-    setSessionHintCookie(res, authUser);
+    setRefreshCookie(res, rotated.refreshToken, rememberMe);
+    setSessionHintCookie(res, authUser, rememberMe);
     res.json({ accessToken: "", user: authUser });
 }
 async function logout(req, res) {

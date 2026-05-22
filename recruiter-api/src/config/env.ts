@@ -41,6 +41,8 @@ const envSchema = z.object({
   JWT_REFRESH_SECRET: z.string().min(16).default("hyreme-local-refresh-secret"),
   ACCESS_TOKEN_TTL: z.string().default("15m"),
   REFRESH_TOKEN_TTL: z.string().default("7d"),
+  REMEMBER_ME_REFRESH_TOKEN_TTL_DAYS: z.coerce.number().default(30),
+  SESSION_REFRESH_TOKEN_TTL_HOURS: z.coerce.number().default(24),
   ENABLE_OTP: booleanFromEnv.default(false),
   SEED_RECRUITER_EMAIL: z.string().email().default("ritika@hyreme.io"),
   SEED_RECRUITER_PASSWORD: z.string().min(8).default("Hyreme@123"),

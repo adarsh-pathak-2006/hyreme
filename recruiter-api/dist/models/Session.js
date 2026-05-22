@@ -41,6 +41,7 @@ const sessionSchema = new mongoose_1.Schema({
     userAgent: { type: String },
     ipAddress: { type: String },
     expiresAt: { type: Date, required: true },
+    rememberMe: { type: Boolean, default: false },
     revokedAt: { type: Date, default: null },
     lastUsedAt: { type: Date, default: Date.now },
 }, { timestamps: true });

@@ -6,6 +6,7 @@ export const userRoleSchema = z.enum(USER_ROLES);
 export const recruiterLoginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
+  rememberMe: z.boolean().optional(),
 });
 
 export const recruiterRegisterSchema = z.object({
@@ -13,6 +14,7 @@ export const recruiterRegisterSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8).max(128),
   companyName: z.string().min(2).max(120),
+  rememberMe: z.boolean().optional(),
 });
 
 export const candidateLoginSchema = recruiterLoginSchema;
@@ -21,6 +23,7 @@ export const candidateRegisterSchema = z.object({
   name: z.string().min(2).max(120),
   email: z.string().email(),
   password: z.string().min(8).max(128),
+  rememberMe: z.boolean().optional(),
 });
 
 export const otpRequestSchema = z.object({
@@ -51,6 +54,7 @@ export const scheduleMeetingSchema = z.object({
   time: z.string().min(1),
   mode: z.string().min(1),
   note: z.string().max(500).default(""),
+  meetingUrl: z.string().url().optional(),
 });
 
 export const sendMessageSchema = z.object({
