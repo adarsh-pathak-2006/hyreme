@@ -36,10 +36,11 @@ function assertCompanyEmail(email: string) {
 }
 
 function getRefreshCookieOptions(rememberMe: boolean) {
+  const isProd = env.NODE_ENV === "production";
   return {
     httpOnly: true,
-    sameSite: "strict" as const,
-    secure: env.NODE_ENV === "production",
+    sameSite: isProd ? ("none" as const) : ("lax" as const),
+    secure: isProd,
     path: "/",
     ...(rememberMe
       ? { maxAge: env.REMEMBER_ME_REFRESH_TOKEN_TTL_DAYS * 24 * 60 * 60 * 1000 }
@@ -48,10 +49,11 @@ function getRefreshCookieOptions(rememberMe: boolean) {
 }
 
 function getSessionHintCookieOptions(rememberMe: boolean) {
+  const isProd = env.NODE_ENV === "production";
   return {
     httpOnly: false,
-    sameSite: "strict" as const,
-    secure: env.NODE_ENV === "production",
+    sameSite: isProd ? ("none" as const) : ("lax" as const),
+    secure: isProd,
     path: "/",
     ...(rememberMe
       ? { maxAge: env.REMEMBER_ME_REFRESH_TOKEN_TTL_DAYS * 24 * 60 * 60 * 1000 }
@@ -60,10 +62,11 @@ function getSessionHintCookieOptions(rememberMe: boolean) {
 }
 
 function setAccessCookie(res: Response, token: string) {
+  const isProd = env.NODE_ENV === "production";
   res.cookie("hyreme_access_token", token, {
     httpOnly: true,
-    sameSite: "strict",
-    secure: env.NODE_ENV === "production",
+    sameSite: isProd ? "none" : "lax",
+    secure: isProd,
     path: "/",
     maxAge: 15 * 60 * 1000,
   });
@@ -313,20 +316,21 @@ export async function logout(req: Request, res: Response) {
     await revokeSessionByRefreshToken(refreshToken);
   }
 
+  const isProd = env.NODE_ENV === "production";
   res.clearCookie("hyreme_access_token", {
     path: "/",
-    sameSite: "strict",
-    secure: env.NODE_ENV === "production",
+    sameSite: isProd ? "none" : "lax",
+    secure: isProd,
   });
   res.clearCookie("hyreme_refresh_token", {
     path: "/",
-    sameSite: "strict",
-    secure: env.NODE_ENV === "production",
+    sameSite: isProd ? "none" : "lax",
+    secure: isProd,
   });
   res.clearCookie("hyreme_session", {
     path: "/",
-    sameSite: "strict",
-    secure: env.NODE_ENV === "production",
+    sameSite: isProd ? "none" : "lax",
+    secure: isProd,
   });
   res.status(204).send();
 }
