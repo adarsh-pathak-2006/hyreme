@@ -9,23 +9,7 @@ import { buildPlayableVideoUrl, resolveAssetUrl } from "@/lib/assets";
 import type { Candidate } from "@/lib/types";
 
 function buildVideoPosterUrl(url?: string) {
-  const resolved = resolveAssetUrl(url);
-  if (!resolved) {
-    return null;
-  }
-
-  const apiOrigin = getApiOrigin();
-
-  if (!resolved.startsWith(`${apiOrigin}/uploads/`)) {
-    return null;
-  }
-
-  const filename = resolved.split("/uploads/")[1]?.split("?")[0];
-  if (!filename) {
-    return null;
-  }
-
-  return `${apiOrigin}/api/uploads/poster/${encodeURIComponent(filename)}`;
+  return null;
 }
 
 function ActionButton({

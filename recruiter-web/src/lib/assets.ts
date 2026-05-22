@@ -19,21 +19,5 @@ export function resolveAssetUrl(url?: string) {
 }
 
 export function buildPlayableVideoUrl(url?: string) {
-  const resolved = resolveAssetUrl(url);
-  if (!resolved) {
-    return null;
-  }
-
-  const apiOrigin = getApiOrigin();
-
-  if (!resolved.startsWith(`${apiOrigin}/uploads/`)) {
-    return resolved;
-  }
-
-  const filename = resolved.split("/uploads/")[1]?.split("?")[0];
-  if (!filename) {
-    return resolved;
-  }
-
-  return `${apiOrigin}/api/uploads/play/${encodeURIComponent(filename)}`;
+  return resolveAssetUrl(url);
 }

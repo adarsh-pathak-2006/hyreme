@@ -137,8 +137,13 @@ export async function ensurePlayableVideoPath(inputPath: string) {
     await fs.access(outputPath);
     return outputPath;
   } catch {
-    await runFfmpegToMp4(inputPath, outputPath);
-    return outputPath;
+    try {
+      await runFfmpegToMp4(inputPath, outputPath);
+      return outputPath;
+    } catch {
+      // If transcoding fails or ffmpeg is not available, fall back to streaming raw input path
+      return inputPath;
+    }
   }
 }
 
@@ -150,7 +155,13 @@ export async function ensureVideoPosterPath(inputPath: string) {
     await fs.access(outputPath);
     return outputPath;
   } catch {
-    await runFfmpegThumbnail(inputPath, outputPath);
-    return outputPath;
+    try {
+      await runFfmpegThumbnail(inputPath, outputPath);
+      return outputPath;
+    } catch {
+      // If poster generation fails or ffmpeg is missing, gracefully return the input path
+      // to avoid 30-second gateway hangs and let the server remain active.
+      return inputPath;
+    }
   }
 }
