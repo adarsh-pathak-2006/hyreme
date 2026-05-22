@@ -43,7 +43,8 @@ export async function uploadAssetController(req: Request, res: Response) {
   // If Cloudinary is configured, stream raw file directly to cloud CDN and clean up local server disk!
   if (isCloudinaryEnabled()) {
     try {
-      const cloudResult = await uploadToCloudinary(req.file.path, "hyreme");
+      const resourceType = isResumeUpload ? "raw" : "video";
+      const cloudResult = await uploadToCloudinary(req.file.path, "hyreme", resourceType);
       await fs.unlink(req.file.path).catch(() => undefined);
 
       res.status(201).json({

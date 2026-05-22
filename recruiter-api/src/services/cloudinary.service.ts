@@ -38,16 +38,16 @@ export function isCloudinaryEnabled(): boolean {
  */
 export async function uploadToCloudinary(
   localFilePath: string,
-  folder: string = "hyreme"
+  folder: string = "hyreme",
+  resourceType: "auto" | "video" | "raw" = "auto"
 ): Promise<{ url: string; publicId: string }> {
   if (!isCloudinaryEnabled()) {
     throw new Error("Cloudinary credentials are not configured.");
   }
 
-  // resource_type: "auto" automatically detects if the file is a PDF/Word doc or an MP4/WebM video!
   const result = await cloudinary.uploader.upload(localFilePath, {
     folder,
-    resource_type: "auto",
+    resource_type: resourceType,
     access_mode: "public",
   });
 
