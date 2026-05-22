@@ -56,18 +56,30 @@ export default function CandidateDashboardPage() {
           action={{ href: "/candidate/profile", label: "Open profile editor" }}
         >
           {candidateProfile ? (
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-              <div className="rounded-2xl bg-[var(--accent-soft)]/18 px-4 py-3">
-                <p className="text-xs uppercase tracking-[0.22em] text-[color:rgba(44,42,74,0.4)]">Role</p>
-                <p className="mt-2 font-semibold text-[var(--accent-deep)]">{candidateProfile.role}</p>
+            <div className="flex flex-col gap-2 text-sm text-[color:rgba(44,42,74,0.7)]">
+              <div className="flex items-center justify-between rounded-2xl bg-[var(--accent-soft)]/18 px-4 py-2.5">
+                <span className="text-xs font-semibold uppercase tracking-[0.22em] text-[color:rgba(44,42,74,0.4)]">
+                  Role
+                </span>
+                <span className="font-semibold text-[var(--accent-deep)] text-right truncate max-w-[240px]" title={candidateProfile.role}>
+                  {candidateProfile.role}
+                </span>
               </div>
-              <div className="rounded-2xl bg-[var(--accent-soft)]/18 px-4 py-3">
-                <p className="text-xs uppercase tracking-[0.22em] text-[color:rgba(44,42,74,0.4)]">Location</p>
-                <p className="mt-2 font-semibold text-[var(--accent-deep)]">{candidateProfile.location}</p>
+              <div className="flex items-center justify-between rounded-2xl bg-[var(--accent-soft)]/18 px-4 py-2.5">
+                <span className="text-xs font-semibold uppercase tracking-[0.22em] text-[color:rgba(44,42,74,0.4)]">
+                  Location
+                </span>
+                <span className="font-semibold text-[var(--accent-deep)] text-right truncate max-w-[240px]" title={candidateProfile.location}>
+                  {candidateProfile.location}
+                </span>
               </div>
-              <div className="rounded-2xl bg-[var(--accent-soft)]/18 px-4 py-3">
-                <p className="text-xs uppercase tracking-[0.22em] text-[color:rgba(44,42,74,0.4)]">Availability</p>
-                <p className="mt-2 font-semibold text-[var(--accent-deep)]">{candidateProfile.availability}</p>
+              <div className="flex items-center justify-between rounded-2xl bg-[var(--accent-soft)]/18 px-4 py-2.5">
+                <span className="text-xs font-semibold uppercase tracking-[0.22em] text-[color:rgba(44,42,74,0.4)]">
+                  Availability
+                </span>
+                <span className="max-w-[240px] truncate font-semibold text-[var(--accent-deep)] text-right" title={candidateProfile.availability}>
+                  {candidateProfile.availability}
+                </span>
               </div>
             </div>
           ) : (

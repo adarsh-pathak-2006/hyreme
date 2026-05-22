@@ -52,30 +52,30 @@ export function CandidateCard({
         ))}
       </div>
 
-      <div className="mt-5 grid gap-3 text-sm text-[color:rgba(44,42,74,0.7)] sm:grid-cols-2 xl:grid-cols-3">
-        <div className="rounded-2xl bg-[var(--accent-soft)]/18 px-4 py-3">
-          <p className="text-xs uppercase tracking-[0.22em] text-[color:rgba(44,42,74,0.4)]">
+      <div className="mt-5 flex flex-col gap-2 text-sm text-[color:rgba(44,42,74,0.7)]">
+        <div className="flex items-center justify-between rounded-2xl bg-[var(--accent-soft)]/18 px-4 py-2.5">
+          <span className="text-xs font-semibold uppercase tracking-[0.22em] text-[color:rgba(44,42,74,0.4)]">
             Experience
-          </p>
-          <p className="mt-2 font-semibold text-[var(--accent-deep)]">
+          </span>
+          <span className="font-semibold text-[var(--accent-deep)] text-right">
             {candidate.experience}
-          </p>
+          </span>
         </div>
-        <div className="rounded-2xl bg-[var(--accent-soft)]/18 px-4 py-3">
-          <p className="text-xs uppercase tracking-[0.22em] text-[color:rgba(44,42,74,0.4)]">
+        <div className="flex items-center justify-between rounded-2xl bg-[var(--accent-soft)]/18 px-4 py-2.5">
+          <span className="text-xs font-semibold uppercase tracking-[0.22em] text-[color:rgba(44,42,74,0.4)]">
             Salary
-          </p>
-          <p className="mt-2 font-semibold text-[var(--accent-deep)]">
+          </span>
+          <span className="font-semibold text-[var(--accent-deep)] text-right">
             {candidate.salary}
-          </p>
+          </span>
         </div>
-        <div className="rounded-2xl bg-[var(--accent-soft)]/18 px-4 py-3">
-          <p className="text-xs uppercase tracking-[0.22em] text-[color:rgba(44,42,74,0.4)]">
+        <div className="flex items-center justify-between rounded-2xl bg-[var(--accent-soft)]/18 px-4 py-2.5">
+          <span className="text-xs font-semibold uppercase tracking-[0.22em] text-[color:rgba(44,42,74,0.4)]">
             Availability
-          </p>
-          <p className="mt-2 font-semibold text-[var(--accent-deep)]">
+          </span>
+          <span className="max-w-[200px] truncate font-semibold text-[var(--accent-deep)] text-right" title={candidate.availability}>
             {candidate.availability}
-          </p>
+          </span>
         </div>
       </div>
 
