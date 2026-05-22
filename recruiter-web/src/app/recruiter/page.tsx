@@ -50,7 +50,7 @@ export default function RecruiterDashboardPage() {
           description="Tap a card to open the candidate workspace with chat, meeting scheduling, and shared context."
           action={{ href: "/recruiter/saved", label: "See all saved" }}
         >
-          <div className="grid gap-4 lg:grid-cols-2">
+          <div className="grid gap-4 grid-cols-1">
             {dashboardCandidates.slice(0, 4).map((candidate) => (
               <CandidateCard
                 key={candidate.id}
