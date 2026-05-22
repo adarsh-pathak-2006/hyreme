@@ -133,10 +133,10 @@ function ReelSlide({
   }, [videoUrl]);
 
   return (
-    <article className="flex h-[calc(100vh-6rem)] snap-start items-center justify-center py-2 sm:h-[calc(100vh-8rem)]">
-      <div className="relative flex h-full max-h-[640px] aspect-[9/16] flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,_#1b1830_0%,_#2c2a4a_55%,_#181629_100%)] shadow-[0_24px_120px_rgba(0,0,0,0.48)]">
+    <article className="flex h-[100dvh] w-screen snap-start items-center justify-center py-0 lg:h-[calc(100vh-8rem)] lg:w-auto lg:py-2">
+      <div className="relative flex h-full w-full flex-col overflow-hidden bg-[#100f1c] lg:max-h-[640px] lg:aspect-[9/16] lg:rounded-[2rem] lg:border lg:border-white/10 lg:bg-[linear-gradient(180deg,_#1b1830_0%,_#2c2a4a_55%,_#181629_100%)] lg:shadow-[0_24px_120px_rgba(0,0,0,0.48)]">
         {/* Header - transparent overlay at top */}
-        <div className="absolute top-0 inset-x-0 z-20 flex items-center justify-between gap-3 bg-gradient-to-b from-black/80 to-transparent px-5 py-4 text-white">
+        <div className="absolute top-0 inset-x-0 z-20 flex items-center justify-between gap-3 bg-gradient-to-b from-black/80 to-transparent px-5 pb-4 pt-[calc(16px+env(safe-area-inset-top,0px))] lg:pt-4 text-white">
           <span className="rounded-full bg-black/45 px-3 py-1 text-[11px] font-semibold tracking-[0.18em]">
             HYREME REEL
           </span>
@@ -199,7 +199,7 @@ function ReelSlide({
         </div>
 
         {/* Footer info & action buttons - overlayed at the bottom */}
-        <div className="absolute bottom-0 inset-x-0 z-20 p-5 bg-gradient-to-t from-black to-transparent text-white">
+        <div className="absolute bottom-0 inset-x-0 z-20 px-5 pt-5 pb-[calc(76px+env(safe-area-inset-bottom,0px))] lg:pb-5 bg-gradient-to-t from-black to-transparent text-white">
           <CandidateMeta candidate={candidate} index={index} />
           
           <div className="mt-4 flex items-center gap-2">
@@ -247,7 +247,7 @@ export function ReelFeed() {
   const [isMuted, setIsMuted] = useState(true);
 
   return (
-    <div className="hide-scrollbar h-[calc(100vh-4rem)] lg:h-[calc(100vh-2rem)] snap-y snap-mandatory overflow-y-auto bg-transparent pb-32 sm:pb-36">
+    <div className="hide-scrollbar h-[100dvh] w-screen lg:h-[calc(100vh-2rem)] lg:w-auto snap-y snap-mandatory overflow-y-auto bg-transparent pb-0 lg:pb-0">
       {candidates.map((candidate, index) => (
         <ReelSlide
           key={candidate.id}

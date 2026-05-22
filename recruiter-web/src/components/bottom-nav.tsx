@@ -85,13 +85,16 @@ export function BottomNav() {
   }
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-50 px-3 pb-3 pt-3 sm:px-4 sm:pb-4">
+    <nav className="fixed inset-x-0 bottom-0 z-50 lg:px-4 lg:pb-4">
       <div
-        className={`mx-auto flex w-full max-w-md items-center justify-between gap-2 rounded-[1.6rem] border p-2 shadow-[0_22px_70px_rgba(44,42,74,0.2)] backdrop-blur xl:max-w-lg ${
-          isFeedRoute
-            ? "border-white/12 bg-[var(--accent-deep)]/74 text-white"
-            : "border-[color:rgba(79,81,140,0.12)] bg-white/92 text-[color:rgba(44,42,74,0.62)]"
-        }`}
+        className={`mx-auto flex w-full items-center justify-between gap-2 border-t backdrop-blur transition-all duration-300
+          lg:max-w-md lg:rounded-[1.6rem] lg:border lg:p-2 lg:shadow-[0_22px_70px_rgba(44,42,74,0.2)] xl:max-w-lg
+          w-full px-6 py-2 pb-[calc(10px+env(safe-area-inset-bottom,0px))] lg:pb-2
+          ${
+            isFeedRoute
+              ? "border-t-white/10 bg-[#100f1c]/95 text-white"
+              : "border-t-[color:rgba(79,81,140,0.12)] bg-white/95 text-[color:rgba(44,42,74,0.62)]"
+          }`}
       >
         {navItems.map((item) => {
           const isActive =
@@ -105,14 +108,14 @@ export function BottomNav() {
               href={item.href}
               aria-label={item.label}
               title={item.label}
-              className={`flex h-14 flex-1 items-center justify-center rounded-[1.15rem] transition ${
+              className={`flex h-12 flex-1 items-center justify-center transition lg:h-14 lg:rounded-[1.15rem] ${
                 isActive
                   ? isFeedRoute
-                    ? "bg-white text-accent-deep"
-                    : "bg-gradient-to-br from-accent-strong to-accent text-white shadow-[0_10px_30px_rgba(44,42,74,0.18)]"
+                    ? "text-white lg:bg-white lg:text-accent-deep"
+                    : "text-[var(--accent-strong)] lg:bg-gradient-to-br lg:from-accent-strong lg:to-accent lg:text-white lg:shadow-[0_10px_30px_rgba(44,42,74,0.18)]"
                   : isFeedRoute
-                    ? "text-white/72 hover:bg-white/10 hover:text-white"
-                    : "hover:bg-accent-soft/22 hover:text-accent-deep"
+                    ? "text-white/50 hover:text-white"
+                    : "text-[color:rgba(44,42,74,0.48)] hover:text-accent-deep"
               }`}
             >
               <item.Icon className="h-5 w-5 sm:h-[1.35rem] sm:w-[1.35rem]" />
