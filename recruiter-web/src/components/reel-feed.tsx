@@ -154,6 +154,7 @@ function ReelSlide({
               key={videoUrl}
               className="h-full w-full object-cover"
               src={videoUrl}
+              crossOrigin="anonymous"
               poster={posterUrl ?? undefined}
               controls={false}
               autoPlay
