@@ -168,6 +168,7 @@ export function RecruiterProvider({ children }: { children: ReactNode }) {
     if (typeof window !== "undefined") {
       window.localStorage.removeItem(STORAGE_KEY);
       window.localStorage.removeItem(MEETING_STORAGE_KEY);
+      document.cookie = "hyreme_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
     }
     setAuthStatus("anonymous");
     setUser(null);
@@ -187,6 +188,10 @@ export function RecruiterProvider({ children }: { children: ReactNode }) {
       const session = await getCurrentSession();
       setUser(session.user);
       setAuthStatus("authenticated");
+
+      if (typeof window !== "undefined") {
+        document.cookie = `hyreme_session=${session.user.role}:${session.user.id}; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax; Secure`;
+      }
 
       if (session.user.role === "recruiter") {
         const bootstrap = await getBootstrap();
