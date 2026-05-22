@@ -13,34 +13,41 @@ function buildVideoPosterUrl(url?: string) {
 }
 
 function ActionButton({
+  icon,
   label,
   active = false,
   onClick,
 }: {
+  icon: React.ReactNode;
   label: string;
   active?: boolean;
   onClick?: () => void | Promise<void>;
 }) {
   return (
-    <button
-      type="button"
-      onClick={() => {
-        void onClick?.();
-      }}
-      className={`flex h-11 w-11 items-center justify-center rounded-full border text-[10px] font-bold tracking-[0.1em] transition ${
-        active
-          ? "border-accent-soft bg-gradient-to-br from-accent-strong to-accent text-white shadow-[0_8px_30px_rgba(79,81,140,0.35)]"
-          : "border-white/14 bg-black/45 text-white hover:bg-accent-strong/48"
-      }`}
-    >
-      {label}
-    </button>
+    <div className="flex flex-col items-center gap-1.5">
+      <button
+        type="button"
+        onClick={() => {
+          void onClick?.();
+        }}
+        className={`flex h-12 w-12 items-center justify-center rounded-full border transition duration-200 active:scale-95 shadow-md ${
+          active
+            ? "border-accent bg-gradient-to-br from-accent-strong to-accent text-white shadow-[0_4px_12px_rgba(79,81,140,0.35)]"
+            : "border-white/15 bg-black/40 text-white backdrop-blur-md hover:bg-white/10"
+        }`}
+      >
+        {icon}
+      </button>
+      <span className="text-[10px] font-bold uppercase tracking-wider text-stone-200 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.95)]">
+        {label}
+      </span>
+    </div>
   );
 }
 
 function CandidateMeta({ candidate, index }: { candidate: Candidate; index: number }) {
   return (
-    <div className="space-y-2 text-white">
+    <div className="space-y-2 text-white pr-14">
       <div className="flex items-center gap-2">
         <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-xs font-semibold backdrop-blur">
           {candidate.name
@@ -183,44 +190,92 @@ function ReelSlide({
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent pointer-events-none" />
         </div>
 
-        {/* Footer info & action buttons - overlayed at the bottom */}
-        <div className="absolute bottom-0 inset-x-0 z-20 px-5 pt-5 pb-[calc(76px+env(safe-area-inset-bottom,0px))] lg:pb-5 bg-gradient-to-t from-black to-transparent text-white">
-          <CandidateMeta candidate={candidate} index={index} />
-          
-          <div className="mt-4 flex items-center gap-2">
-            <ActionButton
-              label={isSaved ? "SVD" : "SAVE"}
-              active={isSaved}
-              onClick={() => toggleSavedCandidate(candidate.id)}
-            />
-            <ActionButton
-              label="MSG"
-              onClick={() => {
-                router.push(`/recruiter/messages?candidateId=${candidate.id}`);
-              }}
-            />
-            {resumeUrl ? (
+        {/* Footer info - overlayed at the bottom left */}
+        <div className="absolute bottom-0 inset-x-0 z-20 px-5 pt-5 pb-[calc(76px+env(safe-area-inset-bottom,0px))] lg:pb-5 bg-gradient-to-t from-black to-transparent text-white pointer-events-none">
+          <div className="pointer-events-auto">
+            <CandidateMeta candidate={candidate} index={index} />
+          </div>
+        </div>
+
+        {/* Floating Right Actions Sidebar (Instagram Reels Style) */}
+        <div className="absolute right-4 bottom-[calc(76px+env(safe-area-inset-bottom,0px)+16px)] lg:bottom-16 z-30 flex flex-col items-center gap-4">
+          {/* Action 1: SAVE */}
+          <ActionButton
+            label={isSaved ? "Saved" : "Save"}
+            active={isSaved}
+            onClick={() => toggleSavedCandidate(candidate.id)}
+            icon={
+              <svg viewBox="0 0 24 24" fill={isSaved ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2.2" className="h-5 w-5">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            }
+          />
+
+          {/* Action 2: MSG */}
+          <ActionButton
+            label="Chat"
+            onClick={() => {
+              router.push(`/recruiter/messages?candidateId=${candidate.id}`);
+            }}
+            icon={
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="h-5 w-5">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            }
+          />
+
+          {/* Action 3: CV */}
+          {resumeUrl ? (
+            <div className="flex flex-col items-center gap-1.5">
               <Link
                 href={resumeUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-white/14 bg-black/45 text-[10px] font-bold tracking-[0.1em] text-white transition hover:bg-accent-strong/48"
+                className="flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-black/40 text-white backdrop-blur-md transition duration-200 hover:bg-white/10 active:scale-95 shadow-md"
               >
-                CV
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="h-5 w-5">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" strokeLinecap="round" strokeLinejoin="round" />
+                  <polyline points="14 2 14 8 20 8" strokeLinecap="round" strokeLinejoin="round" />
+                  <line x1="16" y1="13" x2="8" y2="13" strokeLinecap="round" />
+                  <line x1="16" y1="17" x2="8" y2="17" strokeLinecap="round" />
+                </svg>
               </Link>
-            ) : (
-              <ActionButton label="CV" />
-            )}
+              <span className="text-[10px] font-bold uppercase tracking-wider text-stone-200 drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.95)]">
+                CV
+              </span>
+            </div>
+          ) : (
             <ActionButton
-              label="MEET"
-              onClick={async () => {
-                if (!isSaved) {
-                  await toggleSavedCandidate(candidate.id);
-                }
-                router.push(`/recruiter/saved?candidateId=${candidate.id}&openMeeting=1`);
-              }}
+              label="CV"
+              icon={
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="h-5 w-5 opacity-40">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" strokeLinecap="round" strokeLinejoin="round" />
+                  <polyline points="14 2 14 8 20 8" strokeLinecap="round" strokeLinejoin="round" />
+                  <line x1="16" y1="13" x2="8" y2="13" strokeLinecap="round" />
+                  <line x1="16" y1="17" x2="8" y2="17" strokeLinecap="round" />
+                </svg>
+              }
             />
-          </div>
+          )}
+
+          {/* Action 4: MEET */}
+          <ActionButton
+            label="Meet"
+            onClick={async () => {
+              if (!isSaved) {
+                await toggleSavedCandidate(candidate.id);
+              }
+              router.push(`/recruiter/saved?candidateId=${candidate.id}&openMeeting=1`);
+            }}
+            icon={
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="h-5 w-5">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
+            }
+          />
         </div>
       </div>
     </article>
