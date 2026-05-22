@@ -59,7 +59,7 @@ export function AppShell({ children, rightRail }: AppShellProps) {
   }
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(218,191,255,0.44),_transparent_22%),radial-gradient(circle_at_top_right,_rgba(144,122,214,0.16),_transparent_18%),linear-gradient(180deg,_#f8f5ff_0%,_#f1ecff_100%)] px-3 pt-3 pb-28 sm:px-4 sm:pt-4 sm:pb-32 md:px-6 md:pt-6 lg:pb-6">
+    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(218,191,255,0.44),_transparent_22%),radial-gradient(circle_at_top_right,_rgba(144,122,214,0.16),_transparent_18%),linear-gradient(180deg,_#f8f5ff_0%,_#f1ecff_100%)] px-3 pt-3 pb-28 sm:px-4 sm:pt-4 sm:pb-32 md:px-6 md:pt-6 lg:pb-32">
       <div className="mx-auto grid w-full max-w-7xl gap-5 lg:grid-cols-[240px_minmax(0,1fr)] xl:grid-cols-[260px_minmax(0,1fr)_300px]">
         <aside className="hidden lg:block hyreme-glass rounded-[2rem] p-5">
           <Link href="/" className="block">

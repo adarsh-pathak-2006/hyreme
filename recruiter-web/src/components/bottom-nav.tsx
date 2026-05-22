@@ -85,7 +85,7 @@ export function BottomNav() {
   }
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-50 px-3 pb-3 pt-3 sm:px-4 sm:pb-4 lg:hidden">
+    <nav className="fixed inset-x-0 bottom-0 z-50 px-3 pb-3 pt-3 sm:px-4 sm:pb-4">
       <div
         className={`mx-auto flex w-full max-w-md items-center justify-between gap-2 rounded-[1.6rem] border p-2 shadow-[0_22px_70px_rgba(44,42,74,0.2)] backdrop-blur xl:max-w-lg ${
           isFeedRoute
