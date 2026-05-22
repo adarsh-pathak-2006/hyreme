@@ -3,9 +3,20 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useRecruiterState } from "@/components/recruiter-provider";
 import { buildPlayableVideoUrl, resolveAssetUrl } from "@/lib/assets";
 import type { Candidate } from "@/lib/types";
+
+// Dynamic Client-side Lazy Loading for the Scheduler Planner Widget
+const MeetingPlannerForm = dynamic(() => import("./meeting-planner-form"), {
+  loading: () => (
+    <div className="flex items-center justify-center p-6 text-xs font-semibold text-[var(--accent-strong)] animate-pulse bg-[var(--accent-soft)]/6 rounded-[1.5rem] border border-dashed border-[var(--accent-soft)]">
+      Loading meeting planner...
+    </div>
+  ),
+  ssr: false,
+});
 
 type SavedReelCardProps = {
   candidate: Candidate;
@@ -22,12 +33,6 @@ export function SavedReelCard({
   const [isPlannerOpen, setIsPlannerOpen] = useState(
     autoOpenPlanner || Boolean(existingMeeting),
   );
-  const [date, setDate] = useState(existingMeeting?.date ?? "");
-  const [time, setTime] = useState(existingMeeting?.time ?? "");
-  const [mode, setMode] = useState(existingMeeting?.mode ?? "Google Meet");
-  const [meetingUrl, setMeetingUrl] = useState(existingMeeting?.meetingUrl ?? "");
-  const [note, setNote] = useState(existingMeeting?.note ?? "");
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
   const resumeUrl = resolveAssetUrl(candidate.resumeUrl);
   const reelUrl = buildPlayableVideoUrl(candidate.videoUrl);
@@ -147,105 +152,13 @@ export function SavedReelCard({
 
           <div className="space-y-4">
             {isPlannerOpen ? (
-              <form
-                className="rounded-[1.5rem] border border-[color:rgba(79,81,140,0.1)] bg-[var(--accent-soft)]/6 p-4 space-y-4"
-                onSubmit={async (event) => {
-                  event.preventDefault();
-                  setIsSubmitting(true);
-                  setFeedbackMessage(null);
-
-                  try {
-                    await scheduleMeeting({
-                      candidateId: candidate.id,
-                      date,
-                      time,
-                      mode,
-                      note,
-                      meetingUrl: meetingUrl.trim() || undefined,
-                    });
-                    setFeedbackMessage(
-                      "Meeting saved. The candidate dashboard will update automatically.",
-                    );
-                  } finally {
-                    setIsSubmitting(false);
-                  }
-                }}
-              >
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <label className="block">
-                    <span className="mb-1.5 block text-xs font-semibold text-[var(--accent-strong)]">
-                      Date
-                    </span>
-                    <input
-                      type="date"
-                      value={date}
-                      onChange={(event) => setDate(event.target.value)}
-                      className="w-full rounded-2xl border border-[color:rgba(79,81,140,0.16)] bg-white px-4 py-3 text-sm text-[var(--accent-deep)] outline-none transition"
-                    />
-                  </label>
-                  <label className="block">
-                    <span className="mb-1.5 block text-xs font-semibold text-[var(--accent-strong)]">
-                      Time
-                    </span>
-                    <input
-                      type="time"
-                      value={time}
-                      onChange={(event) => setTime(event.target.value)}
-                      className="w-full rounded-2xl border border-[color:rgba(79,81,140,0.16)] bg-white px-4 py-3 text-sm text-[var(--accent-deep)] outline-none transition"
-                    />
-                  </label>
-                </div>
-
-                <label className="block">
-                  <span className="mb-1.5 block text-xs font-semibold text-[var(--accent-strong)]">
-                    Meeting mode
-                  </span>
-                  <select
-                    value={mode}
-                    onChange={(event) => setMode(event.target.value)}
-                    className="w-full rounded-2xl border border-[color:rgba(79,81,140,0.16)] bg-white px-4 py-3 text-sm text-[var(--accent-deep)] outline-none transition"
-                  >
-                    <option>Google Meet</option>
-                    <option>Zoom</option>
-                    <option>Phone screen</option>
-                    <option>Office visit</option>
-                  </select>
-                </label>
-
-                <label className="block">
-                  <span className="mb-1.5 block text-xs font-semibold text-[var(--accent-strong)]">
-                    Manual meeting link
-                  </span>
-                  <input
-                    type="url"
-                    value={meetingUrl}
-                    onChange={(event) => setMeetingUrl(event.target.value)}
-                    placeholder="https://meet.google.com/..."
-                    className="w-full rounded-2xl border border-[color:rgba(79,81,140,0.16)] bg-white px-4 py-3 text-sm text-[var(--accent-deep)] outline-none transition"
-                  />
-                </label>
-
-                <label className="block">
-                  <span className="mb-1.5 block text-xs font-semibold text-[var(--accent-strong)]">
-                    Recruiter note
-                  </span>
-                  <textarea
-                    value={note}
-                    onChange={(event) => setNote(event.target.value)}
-                    rows={3}
-                    placeholder="Add discussion focus, interviewer, or context for the invite."
-                    className="w-full rounded-2xl border border-[color:rgba(79,81,140,0.16)] bg-white px-4 py-3 text-sm text-[var(--accent-deep)] outline-none transition"
-                  />
-                </label>
-
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="hyreme-primary-button w-full rounded-full px-5 py-3 text-sm font-semibold transition disabled:opacity-70"
-                >
-                  {isSubmitting ? "Saving..." : "Save meeting"}
-                </button>
-              </form>
+              <MeetingPlannerForm
+                candidateId={candidate.id}
+                existingMeeting={existingMeeting}
+                scheduleMeeting={scheduleMeeting}
+                onSuccess={(msg) => setFeedbackMessage(msg)}
+                onError={(err) => setFeedbackMessage(err)}
+              />
             ) : null}
 
             {existingMeeting ? (
