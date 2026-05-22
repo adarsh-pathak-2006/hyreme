@@ -103,7 +103,17 @@ function CandidateMeta({ candidate, index }: { candidate: Candidate; index: numb
   );
 }
 
-function ReelSlide({ candidate, index }: { candidate: Candidate; index: number }) {
+function ReelSlide({
+  candidate,
+  index,
+  isMuted,
+  setIsMuted,
+}: {
+  candidate: Candidate;
+  index: number;
+  isMuted: boolean;
+  setIsMuted: (muted: boolean) => void;
+}) {
   const router = useRouter();
   const { toggleSavedCandidate, isCandidateSaved } = useRecruiterState();
   const isSaved = isCandidateSaved(candidate.id);
@@ -134,6 +144,22 @@ function ReelSlide({ candidate, index }: { candidate: Candidate; index: number }
             <span className="rounded-full border border-white/15 bg-white/8 px-3 py-1 text-[11px] font-semibold">
               {candidate.introDuration}
             </span>
+            <button
+              type="button"
+              onClick={() => setIsMuted(!isMuted)}
+              className="flex h-7 w-7 items-center justify-center rounded-full border border-white/15 bg-black/45 text-white hover:bg-[var(--accent-strong)] hover:border-[var(--accent-soft)] transition"
+              title={isMuted ? "Unmute sound" : "Mute sound"}
+            >
+              {isMuted ? (
+                <svg className="h-3.5 w-3.5 fill-current" viewBox="0 0 24 24">
+                  <path d="M4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" />
+                </svg>
+              ) : (
+                <svg className="h-3.5 w-3.5 fill-current" viewBox="0 0 24 24">
+                  <path d="M3 9v6h4l5 5V4L7 9H3zm7 5.5l-2.5-2.5H5v-2h2.5L10 7.5v7zm4-2.5c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
+                </svg>
+              )}
+            </button>
           </div>
         </div>
 
@@ -147,7 +173,7 @@ function ReelSlide({ candidate, index }: { candidate: Candidate; index: number }
               poster={posterUrl ?? undefined}
               controls={false}
               autoPlay
-              muted
+              muted={isMuted}
               loop
               playsInline
               preload="metadata"
@@ -218,11 +244,18 @@ function ReelSlide({ candidate, index }: { candidate: Candidate; index: number }
 
 export function ReelFeed() {
   const { candidates } = useRecruiterState();
+  const [isMuted, setIsMuted] = useState(true);
 
   return (
     <div className="hide-scrollbar h-[calc(100vh-4rem)] lg:h-[calc(100vh-2rem)] snap-y snap-mandatory overflow-y-auto bg-transparent pb-32 sm:pb-36">
       {candidates.map((candidate, index) => (
-        <ReelSlide key={candidate.id} candidate={candidate} index={index} />
+        <ReelSlide
+          key={candidate.id}
+          candidate={candidate}
+          index={index}
+          isMuted={isMuted}
+          setIsMuted={setIsMuted}
+        />
       ))}
     </div>
   );
