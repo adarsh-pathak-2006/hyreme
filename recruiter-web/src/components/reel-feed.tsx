@@ -133,7 +133,7 @@ function ReelSlide({
   }, [videoUrl]);
 
   return (
-    <article className="flex h-[100dvh] w-screen snap-start items-center justify-center py-0 lg:h-[calc(100vh-8rem)] lg:w-auto lg:py-2">
+    <article className="flex h-[100dvh] w-screen snap-start snap-always items-center justify-center py-0 lg:h-[calc(100vh-8rem)] lg:w-auto lg:py-2">
       <div className="relative flex h-full w-full flex-col overflow-hidden bg-[#100f1c] lg:max-h-[640px] lg:aspect-[9/16] lg:rounded-[2rem] lg:border lg:border-white/10 lg:bg-[linear-gradient(180deg,_#1b1830_0%,_#2c2a4a_55%,_#181629_100%)] lg:shadow-[0_24px_120px_rgba(0,0,0,0.48)]">
         {/* Header - transparent overlay at top */}
         <div className="absolute top-0 inset-x-0 z-20 flex items-center justify-between gap-3 bg-gradient-to-b from-black/80 to-transparent px-5 pb-4 pt-[calc(16px+env(safe-area-inset-top,0px))] lg:pt-4 text-white">
