@@ -32,7 +32,7 @@ export function SavedReelCard({
   const reelUrl = buildPlayableVideoUrl(candidate.videoUrl);
 
   return (
-    <article className="rounded-[2rem] border border-[color:rgba(79,81,140,0.12)] bg-white/92 p-4 shadow-[0_24px_100px_rgba(44,42,74,0.08)] sm:p-5">
+    <article className="border-b border-[color:rgba(79,81,140,0.12)] pb-8 last:border-b-0 last:pb-0 sm:rounded-[2rem] sm:border sm:border-[color:rgba(79,81,140,0.12)] sm:bg-white/92 sm:p-5 sm:shadow-[0_24px_100px_rgba(44,42,74,0.08)]">
       <div className="grid gap-5 xl:grid-cols-[minmax(0,0.8fr)_minmax(320px,0.6fr)]">
         <div className="overflow-hidden rounded-[2rem] bg-[linear-gradient(160deg,var(--accent-deep),var(--accent-strong))] p-5 text-white sm:p-6">
           <div className="flex items-center justify-between">
@@ -63,11 +63,11 @@ export function SavedReelCard({
         </div>
 
         <div className="rounded-[2rem] border border-[color:rgba(79,81,140,0.12)] bg-[var(--accent-soft)]/14 p-4 sm:p-5">
-          <div className="flex flex-wrap gap-2.5">
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:gap-2.5">
             <button
               type="button"
               onClick={() => setIsPlannerOpen((current) => !current)}
-              className="hyreme-primary-button rounded-full px-4 py-2 text-sm font-semibold transition"
+              className="hyreme-primary-button rounded-full py-2.5 px-3 text-center text-xs sm:text-sm font-semibold transition"
             >
               {existingMeeting ? "Edit meeting" : "Create meeting"}
             </button>
@@ -76,9 +76,9 @@ export function SavedReelCard({
               onClick={() => {
                 router.push(`/recruiter/messages?candidateId=${candidate.id}`);
               }}
-              className="hyreme-secondary-button rounded-full px-4 py-2 text-sm font-semibold transition"
+              className="hyreme-secondary-button rounded-full py-2.5 px-3 text-center text-xs sm:text-sm font-semibold transition"
             >
-              Message candidate
+              Message
             </button>
             <button
               type="button"
@@ -91,9 +91,9 @@ export function SavedReelCard({
                 setFeedbackMessage(null);
                 window.open(resumeUrl, "_blank", "noopener,noreferrer");
               }}
-              className="hyreme-secondary-button rounded-full px-4 py-2 text-sm font-semibold transition"
+              className="hyreme-secondary-button rounded-full py-2.5 px-3 text-center text-xs sm:text-sm font-semibold transition"
             >
-              View resume
+              Resume
             </button>
             <button
               type="button"
@@ -106,7 +106,7 @@ export function SavedReelCard({
                 setFeedbackMessage(null);
                 window.open(reelUrl, "_blank", "noopener,noreferrer");
               }}
-              className="hyreme-secondary-button rounded-full px-4 py-2 text-sm font-semibold transition"
+              className="hyreme-secondary-button rounded-full py-2.5 px-3 text-center text-xs sm:text-sm font-semibold transition"
             >
               View reel
             </button>
