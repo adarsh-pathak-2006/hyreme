@@ -41,10 +41,9 @@ export async function uploadAssetController(req: Request, res: Response) {
   const origin = `${req.protocol}://${req.get("host")}`;
   let filename = req.file.filename;
 
-  if (!isResumeUpload) {
-    const converted = await transcodeVideoToMp4(req.file.path);
-    filename = converted.filename;
-  }
+  // We bypass heavy video transcoding on the server in production to avoid hitting Render's 30s HTTP timeout limit,
+  // high CPU restrictions, or triggering Out-Of-Memory (OOM) process termination on limited cloud tiers.
+  // Modern browsers are fully capable of playing standard MP4/WebM videos natively!
 
   res.status(201).json({
     url: `${origin}/uploads/${filename}`,
